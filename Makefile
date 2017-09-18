@@ -1,6 +1,6 @@
 #
 # Samantha Foley
-# CS 441/541: Project 1
+# CS 441/541: Project 2
 #
 #####################################################################
 #
@@ -31,6 +31,7 @@ scheduler: scheduler.c scheduler.h
 clean:
 	$(RM) scheduler
 	$(RM) -rf *.dSYM
+	$(RM) test_out
 
 #
 # Tests
