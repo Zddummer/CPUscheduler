@@ -1,4 +1,4 @@
-# CS441/541 Project 2
+# CS441/541 Scheduling Project
 
 ## Author(s):
 
