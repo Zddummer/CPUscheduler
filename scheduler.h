@@ -1,7 +1,7 @@
 /*
  * 
  *
- * CS 441/541: CPU Scheduler (Project 1)
+ * CS 441/541: CPU Scheduler
  */
 #include <stdio.h>
 #include <stdlib.h>
