@@ -1,5 +1,7 @@
 /*
- * 
+ * Header file for scheduler.c
+ *
+ * @author Zach Dummer
  *
  * CS 441/541: CPU Scheduler
  */
@@ -23,8 +25,12 @@
 /******************************
  * Global Variables
  ******************************/
-
+	int intAlgorithmNumber = 0;
+	int intQuantumValue = -1;
+	char *strFileName = "";
 
 /******************************
  * Function declarations
  ******************************/
+bool fillGlobalVariables(int argc, char **argv);
+int isnumber (const char *c);
