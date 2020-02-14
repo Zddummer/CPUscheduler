@@ -10,6 +10,7 @@
 
 #include "scheduler.h"
 
+// Helper function to see if a string is a number.
 int isnumber (const char *strToCheck) { 
     while (*strToCheck) { 
 		if (*strToCheck < '0' || *strToCheck > '9')
@@ -21,6 +22,7 @@ int isnumber (const char *strToCheck) {
     return 1; 
 }
 
+// Validate the command line arguements and store them in global variables.
 bool fillGlobalVariables(int argc, char **argv){
 
 	int index;
@@ -61,7 +63,7 @@ bool fillGlobalVariables(int argc, char **argv){
 		else if (strcmp(argv[index], strQField) == 0)
 		{
 			// check for duplicate
-			if (intQuantumValue != -1)
+			if (intQuantumValue != 0)
 			{
 				return false;
 			}
@@ -101,7 +103,7 @@ bool fillGlobalVariables(int argc, char **argv){
 	}
 
 	// check if the q value is filled if needed
-	if(intAlgorithmNumber == 4 && intQuantumValue == -1)
+	if(intAlgorithmNumber == 4 && intQuantumValue == 0)
 	{
 		return false;
 	}
@@ -109,12 +111,72 @@ bool fillGlobalVariables(int argc, char **argv){
 	return (blnIsTextFileValid && blnIsAlgorithmNumberValid);
 }
 
+// Open and read from the txt file provided
+void readFile(){
+	FILE *fCurrentFile;
+	int intNumberOfProcesses = 0;
+	char str[20];
+
+	fCurrentFile = fopen(strFileName, "r");
+	if( fCurrentFile == NULL)
+	{
+		printf("ERROR: The file \"%s\" could not be found!\n", strFileName);
+		return;
+	}
+	else
+	{
+		fscanf(fCurrentFile, "%d", &intNumberOfProcesses);
+		Process arrProcesses[intNumberOfProcesses];
+
+		int index = 0;
+		while(intNumberOfProcesses > 0)
+		{
+			fscanf(fCurrentFile, "%s", str);
+			arrProcesses[index].intProcessId = atoi(str);
+
+			fscanf(fCurrentFile, "%s", str);
+			arrProcesses[index].intCPUBurstLength = atoi(str);
+
+			fscanf(fCurrentFile, "%s", str);
+			arrProcesses[index].intPriority = atoi(str);
+
+
+			printf("ID: %d, Burst: %d, Priority: %d\n", arrProcesses[index].intProcessId, arrProcesses[index].intCPUBurstLength, arrProcesses[index].intPriority);
+			index++;
+			intNumberOfProcesses--;
+		}
+		
+	}
+
+}
+
+// Starting point for our program
 int main(int argc, char **argv)
 {
 	printf("Start program\n");
 	if (fillGlobalVariables(argc, argv))
 	{
-		printf("DATA IS VALID\n");
+		printf("Scheduler : %d ", intAlgorithmNumber);
+		switch(intAlgorithmNumber)
+		{
+			case 1 :
+				printf("FCFS\n");
+				break;
+			case 2 :
+				printf("SJF\n");
+				break;
+			case 3 :
+				printf("Priority\n");
+				break;
+			case 4 :
+				printf("RR\n");
+				break;
+			default :
+				break;
+		}
+		printf("Quantum : %d\n", intQuantumValue);
+		printf("Sch. File : %s\n", strFileName);
+		readFile();
 	}
 	else
 	{

@@ -20,13 +20,17 @@
 /******************************
  * Structures
  ******************************/
-
+typedef struct {
+	int intProcessId;
+	int intCPUBurstLength;
+	int intPriority;
+} Process;
 
 /******************************
  * Global Variables
  ******************************/
 	int intAlgorithmNumber = 0;
-	int intQuantumValue = -1;
+	int intQuantumValue = 0;
 	char *strFileName = "";
 
 /******************************
