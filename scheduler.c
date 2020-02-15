@@ -129,6 +129,68 @@ void firstComeFirstServe(Process arrProcesses[], int intArraySize){
 	dblAvgTurnAroundTime = dblAvgTurnAroundTime / intArraySize;
 }
 
+// Implementation of Shortest Job First algorithm.
+void shortestJobFirst(Process arrProcesses[], int intArraySize){
+
+	Process arrProcesses_Copy[intArraySize];
+	bool blnDidSwapOccur;
+
+	// copy the array so we can sort an calculate times but keep arrival order in the copy
+	int i;
+	for (i = 0; i < intArraySize; i++) {
+    	arrProcesses_Copy[i] = arrProcesses[i];
+	}
+
+	do // sort the array by CPU burst length
+	{
+		blnDidSwapOccur = false;
+		int index;
+		for(index = 0; index < (intArraySize - 1); index++)
+		{
+			if(arrProcesses[index].intCPUBurstLength > arrProcesses[index + 1].intCPUBurstLength)
+			{
+				// swap order
+				Process tempProcess = arrProcesses[index];
+				arrProcesses[index] = arrProcesses[index + 1];
+				arrProcesses[index + 1] = tempProcess;
+
+				blnDidSwapOccur = true;
+			}
+		}
+	} while(blnDidSwapOccur);
+
+	// calculated the wait time and turnaround time for the sorted array
+	int index;
+	for(index = 0; index < intArraySize; index++)
+	{
+		arrProcesses[index].intTurnAroundTime = arrProcesses[index].intWaitTime + arrProcesses[index].intCPUBurstLength;
+		arrProcesses[index + 1].intWaitTime = arrProcesses[index].intWaitTime + arrProcesses[index].intCPUBurstLength;
+
+		dblAvgWaitTime = dblAvgWaitTime + arrProcesses[index].intWaitTime;
+		dblAvgTurnAroundTime = dblAvgTurnAroundTime + arrProcesses[index].intTurnAroundTime;
+	}
+
+	dblAvgWaitTime = dblAvgWaitTime / intArraySize;
+	dblAvgTurnAroundTime = dblAvgTurnAroundTime / intArraySize;
+
+	// set the wait and turnaround time for the array that is still sorted by arrival time
+	int index2;
+	for(index2 = 0; index2 < intArraySize; index2++)
+	{
+		int index3;
+		for(index3 = 0; index3 < intArraySize; index3++)
+		{
+			if(arrProcesses_Copy[index2].intProcessId == arrProcesses[index3].intProcessId)
+			{
+				arrProcesses_Copy[index2].intWaitTime = arrProcesses[index3].intWaitTime;
+				arrProcesses_Copy[index2].intTurnAroundTime = arrProcesses[index3].intTurnAroundTime;
+			}
+		}
+
+		printf("# %d\t%d\t%d\t%d\t%d\n", arrProcesses_Copy[index2].intProcessId, arrProcesses_Copy[index2].intCPUBurstLength, arrProcesses_Copy[index2].intPriority, arrProcesses_Copy[index2].intWaitTime, arrProcesses_Copy[index2].intTurnAroundTime);
+	}
+}
+
 // Open and read from the txt file provided
 void readFile(){
 	FILE *fCurrentFile;
@@ -189,7 +251,7 @@ void readFile(){
 				firstComeFirstServe(arrProcesses, intArraySize);
 				break;
 			case 2 :
-				// SFJ
+				shortestJobFirst(arrProcesses, intArraySize);
 				break;
 			case 3 :
 				// Priority
