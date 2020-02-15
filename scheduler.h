@@ -23,6 +23,8 @@
 typedef struct {
 	int intProcessId;
 	int intCPUBurstLength;
+	int intTimeLeftOnCPU;
+	int intTotalTimeOnCPU;
 	int intPriority;
 	int intWaitTime;
 	int intTurnAroundTime;
@@ -40,5 +42,10 @@ typedef struct {
 /******************************
  * Function declarations
  ******************************/
-bool fillGlobalVariables(int argc, char **argv);
 int isnumber (const char *c);
+bool fillGlobalVariables(int argc, char **argv);
+void firstComeFirstServe(Process arrProcesses[], int intArraySize);
+void shortestJobFirst(Process arrProcesses[], int intArraySize);
+void priority(Process arrProcesses[], int intArraySize);
+void roundRobin(Process arrProcesses[], int intArraySize);
+void readFile();

@@ -254,6 +254,56 @@ void priority(Process arrProcesses[], int intArraySize){
 	}
 }
 
+// Implementation for round robin algorithm.
+void roundRobin(Process arrProcesses[], int intArraySize){
+	bool blnComplete = false;
+	int intCurrentWaitTime = 0;
+	int intCurrentTurnAroundTime = 0;
+
+	while(blnComplete == false)
+	{
+		int index;
+		for(index = 0; index < intArraySize; index++)
+		{
+			if(arrProcesses[index].intTimeLeftOnCPU > 0)
+			{
+				int intTimeSpentOnCPU = intQuantumValue;
+				if(arrProcesses[index].intTimeLeftOnCPU < intQuantumValue)
+				{
+					intTimeSpentOnCPU = arrProcesses[index].intTimeLeftOnCPU;
+				}
+				intCurrentTurnAroundTime = intCurrentTurnAroundTime + intTimeSpentOnCPU;
+				arrProcesses[index].intTurnAroundTime = intCurrentTurnAroundTime;
+				arrProcesses[index].intTimeLeftOnCPU = arrProcesses[index].intTimeLeftOnCPU - intTimeSpentOnCPU;
+
+				intCurrentWaitTime += intTimeSpentOnCPU;
+				arrProcesses[index].intTotalTimeOnCPU += intTimeSpentOnCPU;
+				arrProcesses[index].intWaitTime = (intCurrentWaitTime - arrProcesses[index].intTotalTimeOnCPU);
+			}
+		}
+
+		// check to see if we're done
+		blnComplete = true;
+		for(index = 0; index < intArraySize; index++)
+		{
+			if(arrProcesses[index].intTimeLeftOnCPU > 0)
+			{
+				blnComplete = false;
+				break;
+			}
+		}
+	}
+	int index2;
+	for(index2 = 0; index2 < intArraySize; index2++)
+	{
+				dblAvgWaitTime += arrProcesses[index2].intWaitTime;
+				dblAvgTurnAroundTime += arrProcesses[index2].intTurnAroundTime;
+		printf("# %d\t%d\t%d\t%d\t%d\n", arrProcesses[index2].intProcessId, arrProcesses[index2].intCPUBurstLength, arrProcesses[index2].intPriority, arrProcesses[index2].intWaitTime, arrProcesses[index2].intTurnAroundTime);
+	}
+	dblAvgWaitTime /= intArraySize;
+	dblAvgTurnAroundTime /= intArraySize;
+}
+
 // Open and read from the txt file provided
 void readFile(){
 	FILE *fCurrentFile;
@@ -283,6 +333,8 @@ void readFile(){
 
 			fscanf(fCurrentFile, "%s", str);
 			arrProcesses[index].intCPUBurstLength = atoi(str);
+			arrProcesses[index].intTimeLeftOnCPU = arrProcesses[index].intCPUBurstLength;
+			arrProcesses[index].intTotalTimeOnCPU = 0;
 
 			fscanf(fCurrentFile, "%s", str);
 			arrProcesses[index].intPriority = atoi(str);
@@ -320,7 +372,7 @@ void readFile(){
 				priority(arrProcesses, intArraySize);
 				break;
 			case 4 :
-				// RR
+				roundRobin(arrProcesses, intArraySize);
 				break;
 			default :
 				break;
