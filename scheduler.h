@@ -24,6 +24,8 @@ typedef struct {
 	int intProcessId;
 	int intCPUBurstLength;
 	int intPriority;
+	int intWaitTime;
+	int intTurnAroundTime;
 } Process;
 
 /******************************
@@ -32,6 +34,8 @@ typedef struct {
 	int intAlgorithmNumber = 0;
 	int intQuantumValue = 0;
 	char *strFileName = "";
+	double dblAvgWaitTime = 0.0;
+	double dblAvgTurnAroundTime = 0.0;
 
 /******************************
  * Function declarations

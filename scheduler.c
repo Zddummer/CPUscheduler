@@ -111,10 +111,29 @@ bool fillGlobalVariables(int argc, char **argv){
 	return (blnIsTextFileValid && blnIsAlgorithmNumberValid);
 }
 
+// Implementation of First Come First Serve algorithm.
+void firstComeFirstServe(Process arrProcesses[], int intArraySize){
+
+	int index;
+	for(index = 0; index < intArraySize; index++)
+	{
+		arrProcesses[index].intTurnAroundTime = arrProcesses[index].intWaitTime + arrProcesses[index].intCPUBurstLength;
+		arrProcesses[index + 1].intWaitTime = arrProcesses[index].intWaitTime + arrProcesses[index].intCPUBurstLength;
+
+		dblAvgWaitTime = dblAvgWaitTime + arrProcesses[index].intWaitTime;
+		dblAvgTurnAroundTime = dblAvgTurnAroundTime + arrProcesses[index].intTurnAroundTime;
+
+		printf("# %d\t%d\t%d\t%d\t%d\n", arrProcesses[index].intProcessId, arrProcesses[index].intCPUBurstLength, arrProcesses[index].intPriority, arrProcesses[index].intWaitTime, arrProcesses[index].intTurnAroundTime);
+	}
+	dblAvgWaitTime = dblAvgWaitTime / intArraySize;
+	dblAvgTurnAroundTime = dblAvgTurnAroundTime / intArraySize;
+}
+
 // Open and read from the txt file provided
 void readFile(){
 	FILE *fCurrentFile;
 	int intNumberOfProcesses = 0;
+	int intArraySize = 0;
 	char str[20];
 
 	fCurrentFile = fopen(strFileName, "r");
@@ -127,6 +146,9 @@ void readFile(){
 	{
 		fscanf(fCurrentFile, "%d", &intNumberOfProcesses);
 		Process arrProcesses[intNumberOfProcesses];
+		intArraySize = intNumberOfProcesses;
+
+		printf("Arrival Order: ");
 
 		int index = 0;
 		while(intNumberOfProcesses > 0)
@@ -140,12 +162,44 @@ void readFile(){
 			fscanf(fCurrentFile, "%s", str);
 			arrProcesses[index].intPriority = atoi(str);
 
+			arrProcesses[index].intWaitTime = 0;
+			arrProcesses[index].intTurnAroundTime = 0;
 
-			printf("ID: %d, Burst: %d, Priority: %d\n", arrProcesses[index].intProcessId, arrProcesses[index].intCPUBurstLength, arrProcesses[index].intPriority);
+			printf("%d", arrProcesses[index].intProcessId);
+			if(intNumberOfProcesses > 1)
+			{
+				printf(", ");
+			}
+
 			index++;
 			intNumberOfProcesses--;
 		}
-		
+		printf("\nProcess Information:\n");
+		for(index = 0; index < intArraySize; index++)
+		{
+			printf("%d\t%d\t%d\n", arrProcesses[index].intProcessId, arrProcesses[index].intCPUBurstLength, arrProcesses[index].intPriority);
+		}
+		printf("-------------------------------\n");
+		printf("Running...\n");
+		printf("##################################################\n");
+		printf("# #\tCPU\tPri\tW\tT\n");
+		switch(intAlgorithmNumber)
+		{
+			case 1 :
+				firstComeFirstServe(arrProcesses, intArraySize);
+				break;
+			case 2 :
+				// SFJ
+				break;
+			case 3 :
+				// Priority
+				break;
+			case 4 :
+				// RR
+				break;
+			default :
+				break;
+		}
 	}
 
 }
@@ -153,7 +207,6 @@ void readFile(){
 // Starting point for our program
 int main(int argc, char **argv)
 {
-	printf("Start program\n");
 	if (fillGlobalVariables(argc, argv))
 	{
 		printf("Scheduler : %d ", intAlgorithmNumber);
@@ -176,7 +229,12 @@ int main(int argc, char **argv)
 		}
 		printf("Quantum : %d\n", intQuantumValue);
 		printf("Sch. File : %s\n", strFileName);
+		printf("-------------------------------\n");
 		readFile();
+		printf("##################################################\n");
+		printf("# Avg. Waiting Time : %.2f\n", dblAvgWaitTime);
+		printf("# Avg. Turnaround Time: %.2f\n", dblAvgTurnAroundTime);
+		printf("##################################################\n");
 	}
 	else
 	{
@@ -188,7 +246,5 @@ int main(int argc, char **argv)
 
 		return 0;
 	}
-	printf("End program\n");
-
     return 0;
 }
