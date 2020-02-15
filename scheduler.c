@@ -193,7 +193,7 @@ void shortestJobFirst(Process arrProcesses[], int intArraySize){
 
 // Implementation for Priotity algorithm
 // This function is the same as SJF except we sort the array by priority rather thatn CPU burst length.
-void Priority(Process arrProcesses[], int intArraySize){
+void priority(Process arrProcesses[], int intArraySize){
 
 	Process arrProcesses_Copy[intArraySize];
 	bool blnDidSwapOccur;
@@ -317,7 +317,7 @@ void readFile(){
 				shortestJobFirst(arrProcesses, intArraySize);
 				break;
 			case 3 :
-				Priority(arrProcesses, intArraySize);
+				priority(arrProcesses, intArraySize);
 				break;
 			case 4 :
 				// RR
