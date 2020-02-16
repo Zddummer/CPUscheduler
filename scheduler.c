@@ -4,13 +4,14 @@
  * scheduling algorithm.
  *
  * @author Zach Dummer
+ * Date last modified: 2/16/20
  *
  * CS 441/541: CPU Scheduler
  */
 
 #include "scheduler.h"
 
-// Helper function to see if a string is a number.
+/* Helper function to see if a string is a number. */
 int isnumber (const char *strToCheck) { 
     while (*strToCheck) { 
 		if (*strToCheck < '0' || *strToCheck > '9')
@@ -22,7 +23,7 @@ int isnumber (const char *strToCheck) {
     return 1; 
 }
 
-// Validate the command line arguements and store them in global variables.
+/* Validate the command line arguements and store them in global variables. */
 bool fillGlobalVariables(int argc, char **argv){
 
 	int index;
@@ -31,19 +32,19 @@ bool fillGlobalVariables(int argc, char **argv){
 	char *strSField = "-s";
 	char *strQField = "-q";
 
-	// Fill and validate the global variables with the commandline arguments.
+	/* Fill and validate the global variables with the commandline arguments. */
 	for (index = 1; index < argc; index++)
 	{
-		// check if the paramter is -s
+		/* check if the paramter is -s */
 		if (strcmp(argv[index], strSField) == 0)
 		{
-			// check for duplicate
+			/* check for duplicate */
 			if (blnIsAlgorithmNumberValid)
 			{
 				return false;
 			}
 
-			// make sure arg after -s is valid
+			/* make sure arg after -s is valid */
 			if (argv[index + 1] != NULL && isnumber(argv[index + 1]))
 			{
 				intAlgorithmNumber = atoi(argv[index + 1]);
@@ -59,7 +60,7 @@ bool fillGlobalVariables(int argc, char **argv){
 				return false;
 			}
 		}
-		// check if the parameter is -q
+		/* check if the parameter is -q */
 		else if (strcmp(argv[index], strQField) == 0)
 		{
 			// check for duplicate
@@ -68,7 +69,7 @@ bool fillGlobalVariables(int argc, char **argv){
 				return false;
 			}
 
-			// make sure arg after -q is valid
+			/* make sure arg after -q is valid */
 			if(argv[index + 1] != NULL && isnumber(argv[index + 1]))
 			{
 				intQuantumValue = atoi(argv[index + 1]);
@@ -83,10 +84,10 @@ bool fillGlobalVariables(int argc, char **argv){
 				return false;
 			}
 		}
-		// check if parameter is the text file
+		/* check if parameter is the text file */
 		else if (strstr(argv[index], ".txt") != NULL)
 		{
-			// check for duplicate
+			/* check for duplicate */
 			if (blnIsTextFileValid)
 			{
 				return false;
@@ -95,14 +96,14 @@ bool fillGlobalVariables(int argc, char **argv){
 			strFileName = argv[index];
 			blnIsTextFileValid = true;
 		}
-		// we got some invalid data
+		/* we got some invalid data */
 		else
 		{
 			return false;
 		}
 	}
 
-	// check if the q value is filled if needed
+	/* check if the q value is filled if needed */
 	if(intAlgorithmNumber == 4 && intQuantumValue == 0)
 	{
 		return false;
@@ -111,7 +112,7 @@ bool fillGlobalVariables(int argc, char **argv){
 	return (blnIsTextFileValid && blnIsAlgorithmNumberValid);
 }
 
-// Implementation of First Come First Serve algorithm.
+/* Implementation of First Come First Serve algorithm. */
 void firstComeFirstServe(Process arrProcesses[], int intArraySize){
 
 	int index;
@@ -129,19 +130,19 @@ void firstComeFirstServe(Process arrProcesses[], int intArraySize){
 	dblAvgTurnAroundTime = dblAvgTurnAroundTime / intArraySize;
 }
 
-// Implementation of Shortest Job First algorithm.
+/* Implementation of Shortest Job First algorithm. */
 void shortestJobFirst(Process arrProcesses[], int intArraySize){
 
 	Process arrProcesses_Copy[intArraySize];
 	bool blnDidSwapOccur;
 
-	// copy the array so we can sort an calculate times but keep arrival order in the copy
+	/* copy the array so we can sort an calculate times but keep arrival order in the copy */
 	int i;
 	for (i = 0; i < intArraySize; i++) {
     	arrProcesses_Copy[i] = arrProcesses[i];
 	}
 
-	do // sort the array by CPU burst length
+	do /* sort the array by CPU burst length */
 	{
 		blnDidSwapOccur = false;
 		int index;
@@ -149,7 +150,7 @@ void shortestJobFirst(Process arrProcesses[], int intArraySize){
 		{
 			if(arrProcesses[index].intCPUBurstLength > arrProcesses[index + 1].intCPUBurstLength)
 			{
-				// swap order
+				/* swap order */
 				Process tempProcess = arrProcesses[index];
 				arrProcesses[index] = arrProcesses[index + 1];
 				arrProcesses[index + 1] = tempProcess;
@@ -159,7 +160,7 @@ void shortestJobFirst(Process arrProcesses[], int intArraySize){
 		}
 	} while(blnDidSwapOccur);
 
-	// calculated the wait time and turnaround time for the sorted array
+	/* calculated the wait time and turnaround time for the sorted array */
 	int index;
 	for(index = 0; index < intArraySize; index++)
 	{
@@ -173,7 +174,7 @@ void shortestJobFirst(Process arrProcesses[], int intArraySize){
 	dblAvgWaitTime = dblAvgWaitTime / intArraySize;
 	dblAvgTurnAroundTime = dblAvgTurnAroundTime / intArraySize;
 
-	// set the wait and turnaround time for the array that is still sorted by arrival time
+	/* set the wait and turnaround time for the array that is still sorted by arrival time */
 	int index2;
 	for(index2 = 0; index2 < intArraySize; index2++)
 	{
@@ -191,20 +192,20 @@ void shortestJobFirst(Process arrProcesses[], int intArraySize){
 	}
 }
 
-// Implementation for Priotity algorithm
-// This function is the same as SJF except we sort the array by priority rather thatn CPU burst length.
+/* Implementation for Priotity algorithm
+ * This function is the same as SJF except we sort the array by priority rather thatn CPU burst length.*/
 void priority(Process arrProcesses[], int intArraySize){
 
 	Process arrProcesses_Copy[intArraySize];
 	bool blnDidSwapOccur;
 
-	// copy the array so we can sort an calculate times but keep arrival order in the copy
+	/* copy the array so we can sort an calculate times but keep arrival order in the copy */
 	int i;
 	for (i = 0; i < intArraySize; i++) {
     	arrProcesses_Copy[i] = arrProcesses[i];
 	}
 
-	do // sort the array by CPU burst length
+	do /* sort the array by CPU burst length */
 	{
 		blnDidSwapOccur = false;
 		int index;
@@ -212,7 +213,7 @@ void priority(Process arrProcesses[], int intArraySize){
 		{
 			if(arrProcesses[index].intPriority > arrProcesses[index + 1].intPriority)
 			{
-				// swap order
+				/* swap order */
 				Process tempProcess = arrProcesses[index];
 				arrProcesses[index] = arrProcesses[index + 1];
 				arrProcesses[index + 1] = tempProcess;
@@ -222,7 +223,7 @@ void priority(Process arrProcesses[], int intArraySize){
 		}
 	} while(blnDidSwapOccur);
 
-	// calculated the wait time and turnaround time for the sorted array
+	/* calculated the wait time and turnaround time for the sorted array */
 	int index;
 	for(index = 0; index < intArraySize; index++)
 	{
@@ -236,7 +237,7 @@ void priority(Process arrProcesses[], int intArraySize){
 	dblAvgWaitTime = dblAvgWaitTime / intArraySize;
 	dblAvgTurnAroundTime = dblAvgTurnAroundTime / intArraySize;
 
-	// set the wait and turnaround time for the array that is still sorted by arrival time
+	/* set the wait and turnaround time for the array that is still sorted by arrival time */
 	int index2;
 	for(index2 = 0; index2 < intArraySize; index2++)
 	{
@@ -254,7 +255,7 @@ void priority(Process arrProcesses[], int intArraySize){
 	}
 }
 
-// Implementation for round robin algorithm.
+/* Implementation for round robin algorithm. */
 void roundRobin(Process arrProcesses[], int intArraySize){
 	bool blnComplete = false;
 	int intCurrentWaitTime = 0;
@@ -282,7 +283,7 @@ void roundRobin(Process arrProcesses[], int intArraySize){
 			}
 		}
 
-		// check to see if we're done
+		/* check to see if we're done */
 		blnComplete = true;
 		for(index = 0; index < intArraySize; index++)
 		{
@@ -304,7 +305,7 @@ void roundRobin(Process arrProcesses[], int intArraySize){
 	dblAvgTurnAroundTime /= intArraySize;
 }
 
-// Open and read from the txt file provided
+/* Open and read from the txt file provided */
 void readFile(){
 	FILE *fCurrentFile;
 	int intNumberOfProcesses = 0;
@@ -381,7 +382,7 @@ void readFile(){
 
 }
 
-// Starting point for our program
+/* Starting point for our program */
 int main(int argc, char **argv)
 {
 	if (fillGlobalVariables(argc, argv))
